@@ -1,11 +1,22 @@
 {{ define "content" }}
 
-  <h2>User List:</h2>
-
-  <ul>
-  {{ range $idx, $user := . }}
-    <li>{{ $user.Username }}</li>
-  {{ end }}
-  </ul>
+  <h1>User List:</h1>
+  <br>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Password</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{ range $idx, $user := . }}
+      <tr>
+        <td>{{ $user.Username }}</td>
+        <td>{{ $user.Password }}</td>
+      </tr>
+    {{ end }}
+    </tbody>
+  </table>
 
 {{ end }}

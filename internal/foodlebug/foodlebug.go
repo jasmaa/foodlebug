@@ -27,7 +27,11 @@ func handleDisplay(store *store.Store) http.Handler {
 
     w.WriteHeader(http.StatusOK)
     var t *template.Template
-    t, _ = template.ParseFiles("assets/templates/main.html", "assets/templates/testDisplay.html")
+    t, _ = template.ParseFiles(
+      "assets/templates/main.html",
+      "assets/templates/testDisplay.html",
+      "assets/templates/footer.html",
+    )
     t.ExecuteTemplate(w, "main", users)
   })
 }
@@ -53,6 +57,7 @@ func (f *Foodlebug) Run(){
   // routing
   r := mux.NewRouter()
   r.Handle("/", handleDisplay(f.store))
+  http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets/static"))))
   http.Handle("/", r)
 
   // start server
