@@ -1,3 +1,3 @@
-# Craigslist Go
+# Foodlebug
 
-A Craigslist clone for sharing leftover catering food
+A Craigslist clone for sharing leftover food

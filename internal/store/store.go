@@ -1,12 +1,13 @@
 // Database control
 
-package main
+package store
 
 import (
   "fmt"
   "database/sql"
-
   _ "github.com/lib/pq"
+
+  "github.com/jasmaa/foodlebug/internal/models"
 )
 
 type Store struct {
@@ -31,7 +32,7 @@ func (store *Store) Connect(host string, port int, user string, password string,
   }
 }
 
-func (store *Store) AddUser(u *User) {
+func (store *Store) AddUser(u *models.User) {
   // Insert user into db
 
   var err error
@@ -41,7 +42,7 @@ func (store *Store) AddUser(u *User) {
   }
 }
 
-func (store *Store) GetUsers() []*User {
+func (store *Store) GetUsers() []*models.User {
   // Retrieve user
 
   rows, err := store.db.Query("SELECT id, username, password, rating FROM users")
@@ -50,11 +51,11 @@ func (store *Store) GetUsers() []*User {
 	}
 	defer rows.Close()
 
-  users := []*User{}
+  users := []*models.User{}
 
   // Iterate thru users
   for rows.Next() {
-    user := &User{}
+    user := &models.User{}
     err = rows.Scan(&user.Id, &user.Username, &user.Password, &user.Rating)
     if err != nil {
       panic(err)
