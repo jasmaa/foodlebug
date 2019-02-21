@@ -1,0 +1,11 @@
+{{ define "content" }}
+
+  <h2>User List:</h2>
+
+  <ul>
+  {{ range $idx, $user := . }}
+    <li>{{ $user.Username }}</li>
+  {{ end }}
+  </ul>
+
+{{ end }}

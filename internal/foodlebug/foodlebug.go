@@ -5,6 +5,7 @@ package foodlebug
 import (
   "fmt"
   "net/http"
+  "html/template"
   "github.com/gorilla/mux"
 
   "github.com/jasmaa/foodlebug/internal/store"
@@ -18,14 +19,25 @@ type Foodlebug struct {
   store *store.Store
 }
 
-func TestHandler(w http.ResponseWriter, r *http.Request){
-  w.WriteHeader(http.StatusOK)
-  fmt.Fprintf(w, "hello")
+func handleDisplay(store *store.Store) http.Handler {
+  // Dummy handler
+
+  return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+    users := store.GetUsers()
+
+    w.WriteHeader(http.StatusOK)
+    var t *template.Template
+    t, _ = template.ParseFiles("assets/templates/main.html", "assets/templates/testDisplay.html")
+    t.ExecuteTemplate(w, "main", users)
+  })
 }
 
 func (f *Foodlebug) Run(){
+  // Runs site
+
   fmt.Println("Start...")
 
+  // connect to db
   f.store = &store.Store{}
   f.store.Connect(host, port, user, password, dbname)
 
@@ -38,15 +50,9 @@ func (f *Foodlebug) Run(){
   })
   */
 
-  users := f.store.GetUsers()
-
-  for _, user := range users {
-    fmt.Println(user.Username)
-  }
-
   // routing
   r := mux.NewRouter()
-  r.HandleFunc("/", TestHandler)
+  r.Handle("/", handleDisplay(f.store))
   http.Handle("/", r)
 
   // start server

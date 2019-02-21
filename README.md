@@ -1,3 +1,3 @@
 # Foodlebug
 
-A Craigslist clone for sharing leftover food
+A WIP web app for sharing leftover food

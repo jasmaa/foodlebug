@@ -1,5 +1,10 @@
-start:
-	go run cmd/app.go
+BINARY_NAME=foodlebug.exe
 
+start:
+	go build -o $(BINARY_NAME) cmd/app.go
+	./$(BINARY_NAME)
 build:
-	go build cmd/app.go
+	go build -o $(BINARY_NAME) cmd/app.go
+clean:
+	go clean
+	rm -f $(BINARY_NAME)
