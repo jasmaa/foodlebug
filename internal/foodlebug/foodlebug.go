@@ -38,24 +38,16 @@ func handleDisplay(store *store.Store) http.Handler {
 
 func (f *Foodlebug) Run(){
   // Runs site
-
   fmt.Println("Start...")
 
   // connect to db
   f.store = &store.Store{}
   f.store.Connect(host, port, user, password, dbname)
 
-  /*
-  store.AddUser(&User{
-    2,
-    "John",
-    "super secret password",
-    6.9,
-  })
-  */
-
   // routing
   r := mux.NewRouter()
+  r.Handle("/login", handleLogin(f.store))
+  r.Handle("/createAccount", handleCreateAccount(f.store))
   r.Handle("/", handleDisplay(f.store))
   http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets/static"))))
   http.Handle("/", r)
