@@ -4,6 +4,7 @@ package store
 
 import (
   "fmt"
+  "errors"
   "math/rand"
   "database/sql"
   _ "github.com/lib/pq"
@@ -34,14 +35,36 @@ func (store *Store) Connect(host string, port int, user string, password string,
 
 func (store *Store) AddUser(u *models.User) error {
   // Insert user into db
-
   var err error
-  _, err = store.db.Query("INSERT INTO users (id, username, password, rating) VALUES ($1, $2, $3, $4)", u.Id, u.Username, u.Password, u.Rating)
+  _, err = store.db.Query(
+    "INSERT INTO users (id, username, password, rating) VALUES ($1, $2, $3, $4)",
+    u.Id, u.Username, u.Password, u.Rating
+  )
   if err != nil {
     return err
   }
 
   return nil
+}
+
+func (store *Store) GetUser(field string, val string) (*models.User, error) {
+  // Retrieve user by field
+  rows, err := store.db.Query(fmt.Sprintf("SELECT id, username, password, rating FROM users WHERE %s='%s'", field, val))
+	if err != nil {
+    return nil, errors.New("Could not query db")
+	}
+	defer rows.Close()
+
+  if rows.Next(){
+    user := &models.User{}
+    err = rows.Scan(&user.Id, &user.Username, &user.Password, &user.Rating)
+    if err != nil {
+      panic(err)
+    }
+    return user, nil;
+  }
+
+  return nil, errors.New("Could not get user")
 }
 
 func (store *Store) GetUsers() []*models.User {

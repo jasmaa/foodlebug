@@ -1,9 +1,25 @@
 {{ define "content" }}
-  <h2>Login</h2>
+  <div class="jumbotron login-panel">
+    <h2>Login</h2>
 
-  <form method="POST">
-    <label>Username</label><input name="username" type="text" value=""><br>
-    <label>Password</label><input name="password" type="text" value=""><br>
-    <input class="btn btn-primary" type="submit" value="Login">
-  </form>
+    {{ range $i, $val := . }}
+      {{ if $val}}
+        <div class="alert alert-danger" role="alert">
+          {{ $val }}
+        </div>
+      {{ end }}
+    {{ end }}
+
+    <form method="POST">
+      <div class="form-group">
+        <input class="form-control" name="username" type="text" value="" placeholder="Username"><br>
+        <input class="form-control" name="password" type="password" value="" placeholder="Password"><br>
+        <br>
+        <input class="btn btn-primary" type="submit" value="Login">
+      </div>
+    </form>
+
+    <a href="./createAccount">Create an account</a>
+
+  </div>
 {{ end }}
