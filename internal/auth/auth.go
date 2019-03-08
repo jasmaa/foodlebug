@@ -4,7 +4,10 @@ package auth
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"errors"
 	"io"
+	"net/http"
+	"strings"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -38,12 +41,60 @@ func NewSession(store *store.Store, user *models.User, expires time.Time, ipAddr
 		UserAgent: userAgent,
 	}
 
-	err := store.InsertSession(s)
+	// Update or create
+	var err error
+
+	err = store.DeleteSessions(s.UserKey)
+	if err != nil {
+		return nil, err
+	}
+
+	err = store.InsertSession(s)
 	if err != nil {
 		return nil, err
 	}
 
 	return s, nil
+}
+
+func SessionToUser(store *store.Store, r *http.Request) (*models.User, error) {
+
+	cookies := r.Cookies()
+	cookieValue := ""
+
+	// Read in cookie value
+	for i := range cookies {
+		if cookies[i].Name == "foodlebug" {
+			if cookies[i].Value != "" {
+				cookieValue = cookies[i].Value
+				break
+			}
+		}
+	}
+
+	if cookieValue == "" {
+		return nil, errors.New("no cookie")
+	}
+
+	var userKey string
+	var sessionId string
+
+	vals := strings.Split(cookieValue, "_")
+	userKey = vals[0]
+	sessionId = vals[1]
+
+	s, err := store.GetSession(userKey)
+
+	if s.SessionId != sessionId {
+		return nil, errors.New("session invalid")
+	}
+
+	user, err := store.GetUser("username", userKey)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 // Hash password

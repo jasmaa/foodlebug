@@ -10,7 +10,7 @@ CREATE TABLE posts (
     posterId int NOT NULL,
     photo bytea NOT NULL,
     content varchar(255),
-    timePosted abstime,
+    timePosted timestamp with time zone,
     locationLat real,
     locationLon real,
     /*commentIds integer[]*/
@@ -29,8 +29,8 @@ CREATE TABLE sessions (
     userKey varchar(255),
     sessionId varchar(255),
     CSRFToken varchar(255),
-    expires abstime,
-    created abstime,
+    expires timestamp with time zone,
+    created timestamp with time zone,
     ipAddress varchar(255),
     userAgent varchar(255)
 );

@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"math/rand"
+	"time"
 
 	_ "github.com/lib/pq"
 
@@ -41,20 +42,6 @@ func (store *Store) AddUser(u *models.User) error {
 	_, err = store.db.Query(
 		"INSERT INTO users (id, username, password, rating) VALUES ($1, $2, $3, $4)",
 		u.Id, u.Username, u.Password, u.Rating)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Insert session into db
-func (store *Store) InsertSession(s *models.Session) error {
-
-	var err error
-	_, err = store.db.Query(
-		"INSERT INTO sessions (userKey, sessionId, CSRFToken, expires, created, ipAddress, userAgent) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-		s.UserKey, s.SessionId, s.CSRFToken, s.Expires, s.Created, s.IPAddress, s.UserAgent)
 	if err != nil {
 		return err
 	}
@@ -134,4 +121,62 @@ func (store *Store) GenerateUserId() int {
 	}
 
 	return int(id)
+}
+
+// Insert session into db
+func (store *Store) InsertSession(s *models.Session) error {
+
+	var err error
+	_, err = store.db.Query(
+		"INSERT INTO sessions (userKey, sessionId, CSRFToken, expires, created, ipAddress, userAgent) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+		s.UserKey, s.SessionId, s.CSRFToken, s.Expires, s.Created, s.IPAddress, s.UserAgent)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Remove all sessions with userkey
+func (store *Store) DeleteSessions(userKey string) error {
+	_, err := store.db.Query(fmt.Sprintf("DELETE FROM sessions WHERE userKey='%s'", userKey))
+	if err != nil {
+		return errors.New("Could not query db")
+	}
+	return nil
+}
+
+// Retrieve session by userkey
+func (store *Store) GetSession(userKey string) (*models.Session, error) {
+
+	rows, err := store.db.Query(fmt.Sprintf("SELECT sessionId, CSRFToken, expires, created, ipAddress, userAgent FROM sessions WHERE userKey='%s'", userKey))
+	if err != nil {
+		return nil, errors.New("Could not query db")
+	}
+	defer rows.Close()
+
+	var expireRaw string
+	var createdRaw string
+
+	if rows.Next() {
+		s := &models.Session{UserKey: userKey}
+		err = rows.Scan(
+			&s.SessionId,
+			&s.CSRFToken,
+			&expireRaw,
+			&createdRaw,
+			&s.IPAddress,
+			&s.UserAgent,
+		)
+		if err != nil {
+			panic(err)
+		}
+
+		s.Expires, _ = time.Parse(time.RFC3339, expireRaw)
+		s.Created, _ = time.Parse(time.RFC3339, createdRaw)
+
+		return s, nil
+	}
+
+	return nil, errors.New("Could not get session")
 }

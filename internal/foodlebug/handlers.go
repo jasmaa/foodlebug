@@ -14,7 +14,14 @@ import (
 func handleDisplay(store *store.Store) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		users := store.GetUsers()
+
+		user, err := auth.SessionToUser(store, r)
+
+		// Redirect to login on session failure
+		if err != nil {
+			http.Redirect(w, r, "./login", http.StatusSeeOther)
+			return
+		}
 
 		w.WriteHeader(http.StatusOK)
 		var t *template.Template
@@ -23,7 +30,7 @@ func handleDisplay(store *store.Store) http.Handler {
 			"assets/templates/testDisplay.html",
 			"assets/templates/footer.html",
 		)
-		t.ExecuteTemplate(w, "main", users)
+		t.ExecuteTemplate(w, "main", user)
 	})
 }
 
@@ -95,9 +102,24 @@ func handleLogin(store *store.Store) http.Handler {
 				return
 			}
 
-			// do session stuff here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			fmt.Fprintf(w, "%s\n%s\n%s", user.Username, user.Password, password)
-			auth.NewSession(store, user, time.Time{}, "ip address", "user agent")
+			// set session cookie
+			s, err := auth.NewSession(store, user, time.Time{}, "ip address", "user agent")
+			if err != nil {
+				messages := append(messages, "Could not login.")
+				displayLogin(w, messages)
+				return
+			}
+
+			cookie := &http.Cookie{
+				Name:     "foodlebug",
+				Value:    fmt.Sprintf("%s_%s", s.UserKey, s.SessionId),
+				HttpOnly: true,
+				Path:     "/",
+				Expires:  s.Expires,
+			}
+
+			http.SetCookie(w, cookie)
+			http.Redirect(w, r, "./", http.StatusSeeOther)
 		}
 	})
 }
