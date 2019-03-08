@@ -14,7 +14,7 @@ CREATE TABLE posts (
     locationLat real,
     locationLon real,
     /*commentIds integer[]*/
-    visible boolean,
+    visible boolean
 );
 
 CREATE TABLE comments (
@@ -22,5 +22,15 @@ CREATE TABLE comments (
     postId int NOT NULL,
     posterId int NOT NULL,
     content varchar(255),
-    visible boolean,
+    visible boolean
+);
+
+CREATE TABLE sessions (
+    userKey varchar(255),
+    sessionId varchar(255),
+    CSRFToken varchar(255),
+    expires abstime,
+    created abstime,
+    ipAddress varchar(255),
+    userAgent varchar(255)
 );

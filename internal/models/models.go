@@ -1,34 +1,43 @@
-// Models
-
+// Foodlebug models
 package models
 
 import (
-  "time"
+	"time"
 )
 
 type User struct {
-  Id int
-  Username string
-  Password string
-  Rating float64
+	Id       int
+	Username string
+	Password string
+	Rating   float64
 }
 
 type Post struct {
-  Id int
-  PosterId int
-  Photo []byte
-  Content string
-  TimePosted time.Duration
-  LocationLat float64
-  LocationLon float64
-  Comments []Comment
-  Visible bool
+	Id          int
+	PosterId    int
+	Photo       []byte
+	Content     string
+	TimePosted  time.Duration
+	LocationLat float64
+	LocationLon float64
+	Comments    []Comment
+	Visible     bool
 }
 
 type Comment struct {
-  Id int
-  PostId int
-  PosterId int
-  Content string
-  Visible bool
+	Id       int
+	PostId   int
+	PosterId int
+	Content  string
+	Visible  bool
+}
+
+type Session struct {
+	UserKey   string
+	SessionId string
+	CSRFToken string
+	Expires   time.Time
+	Created   time.Time
+	IPAddress string
+	UserAgent string
 }
