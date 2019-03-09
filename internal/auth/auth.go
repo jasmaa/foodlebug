@@ -85,7 +85,10 @@ func SessionToUser(store *store.Store, r *http.Request) (*models.User, error) {
 
 	s, err := store.GetSession(userKey)
 
+	// Check if session is valid and un-expired
 	if s.SessionId != sessionId {
+		return nil, errors.New("session invalid")
+	} else if time.Now().After(s.Expires) {
 		return nil, errors.New("session invalid")
 	}
 

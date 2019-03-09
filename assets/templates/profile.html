@@ -1,0 +1,21 @@
+{{ define "content" }}
+
+<div class="jumbotron profile-panel">
+    <img class="circle-cropper center-img" src="static/images/cat.jpg">
+    <br>
+    <div class="card profile-info-panel">
+        <h1 align="center">{{ .Username }}</h1>
+        <p id="rating" align ="center"></p>
+
+        <hr>
+
+        <h2>Recent Postings:</h2>
+
+    </div>
+</div>
+
+<script>
+    numToStars({{.Rating}}, "rating")
+</script>
+
+{{ end }}

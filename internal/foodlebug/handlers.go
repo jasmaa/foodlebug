@@ -10,8 +10,8 @@ import (
 	"github.com/jasmaa/foodlebug/internal/store"
 )
 
-// Dummy handler for main page
-func handleDisplay(store *store.Store) http.Handler {
+// Handles user profile
+func handleProfile(store *store.Store) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -27,8 +27,8 @@ func handleDisplay(store *store.Store) http.Handler {
 		var t *template.Template
 		t, _ = template.ParseFiles(
 			"assets/templates/main.html",
-			"assets/templates/testDisplay.html",
-			"assets/templates/footer.html",
+			"assets/templates/profile.html",
+			"assets/templates/includes.html",
 		)
 		t.ExecuteTemplate(w, "main", user)
 	})
@@ -133,7 +133,7 @@ func displayCreateAccount(w http.ResponseWriter, messages []string) {
 	var t *template.Template
 	t, _ = template.ParseFiles(
 		"assets/templates/main.html",
-		"assets/templates/footer.html",
+		"assets/templates/includes.html",
 		"assets/templates/createAccount.html",
 	)
 	t.ExecuteTemplate(w, "main", messages)
@@ -146,7 +146,7 @@ func displayLogin(w http.ResponseWriter, messages []string) {
 	var t *template.Template
 	t, _ = template.ParseFiles(
 		"assets/templates/main.html",
-		"assets/templates/footer.html",
+		"assets/templates/includes.html",
 		"assets/templates/login.html",
 	)
 	t.ExecuteTemplate(w, "main", messages)
@@ -159,7 +159,7 @@ func displayCreateAccountSuccess(w http.ResponseWriter) {
 	var t *template.Template
 	t, _ = template.ParseFiles(
 		"assets/templates/main.html",
-		"assets/templates/footer.html",
+		"assets/templates/includes.html",
 		"assets/templates/createAccountSuccess.html",
 	)
 	t.ExecuteTemplate(w, "main", "")

@@ -1,3 +1,44 @@
-.login-panel {
+.middle-panel {
+  margin: 5% 30% 5% 30%;
+}
+@media (max-width : 800px) {
+  .middle-panel {
+    margin: 5% 1% 5% 1%;
+  }
+}
+
+.profile-panel {
   margin: 5% 20% 5% 20%;
+}
+@media (max-width : 800px) {
+  .profile-panel {
+    margin: 5% 1% 5% 1%;
+  }
+}
+
+.profile-info-panel {
+  margin: 0% 10% 0% 10%;
+  padding: 1% 1% 1% 1%;
+}
+@media (max-width : 800px) {
+  .profile-info-panel {
+    margin: 0% 1% 0% 1%;
+  }
+}
+
+.circle-cropper {
+  object-fit: cover;
+  width: 300px;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 50%;
+
+  border: 10px solid white;
+}
+
+.center-img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
