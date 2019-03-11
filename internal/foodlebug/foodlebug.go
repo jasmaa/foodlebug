@@ -29,6 +29,7 @@ func (f *Foodlebug) Run() {
 	// routing
 	r := mux.NewRouter()
 	r.Handle("/login", handleLogin(f.store))
+	r.Handle("/logout", handleLogout(f.store))
 	r.Handle("/createAccount", handleCreateAccount(f.store))
 	r.Handle("/profile", handleProfile(f.store))
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets/static"))))

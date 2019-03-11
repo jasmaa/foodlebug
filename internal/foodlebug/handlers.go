@@ -119,8 +119,32 @@ func handleLogin(store *store.Store) http.Handler {
 			}
 
 			http.SetCookie(w, cookie)
-			http.Redirect(w, r, "./", http.StatusSeeOther)
+			http.Redirect(w, r, "./profile", http.StatusSeeOther)
 		}
+	})
+}
+
+// Logout handler
+func handleLogout(store *store.Store) http.Handler {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user, err := auth.SessionToUser(store, r)
+
+		// Redirect to login on session failure
+		if err != nil {
+			http.Redirect(w, r, "./login", http.StatusSeeOther)
+			return
+		}
+
+		err = auth.ExpireSession(store, user.Username)
+
+		// Redirect to profile on error
+		if err != nil {
+			http.Redirect(w, r, "./profile", http.StatusSeeOther)
+			return
+		}
+
+		displayLogoutSuccess(w)
 	})
 }
 
@@ -161,6 +185,19 @@ func displayCreateAccountSuccess(w http.ResponseWriter) {
 		"assets/templates/main.html",
 		"assets/templates/includes.html",
 		"assets/templates/createAccountSuccess.html",
+	)
+	t.ExecuteTemplate(w, "main", "")
+}
+
+// Logout success
+func displayLogoutSuccess(w http.ResponseWriter) {
+
+	w.WriteHeader(http.StatusOK)
+	var t *template.Template
+	t, _ = template.ParseFiles(
+		"assets/templates/main.html",
+		"assets/templates/includes.html",
+		"assets/templates/logoutSuccess.html",
 	)
 	t.ExecuteTemplate(w, "main", "")
 }

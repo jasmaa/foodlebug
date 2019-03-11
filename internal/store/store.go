@@ -180,3 +180,14 @@ func (store *Store) GetSession(userKey string) (*models.Session, error) {
 
 	return nil, errors.New("Could not get session")
 }
+
+// Update session
+func (store *Store) UpdateSessionExpire(userKey string, expires time.Time) error {
+	rows, err := store.db.Query("UPDATE sessions SET expires=$1 WHERE userKey=$2", expires, userKey)
+	if err != nil {
+		return errors.New("Could not query db")
+	}
+	defer rows.Close()
+
+	return nil
+}

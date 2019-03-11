@@ -57,6 +57,17 @@ func NewSession(store *store.Store, user *models.User, expires time.Time, ipAddr
 	return s, nil
 }
 
+// Expire session for a user
+func ExpireSession(store *store.Store, userKey string) error {
+	session, err := store.GetSession(userKey)
+	if err != nil {
+		return err
+	}
+
+	store.UpdateSessionExpire(session.UserKey, time.Now())
+	return nil
+}
+
 func SessionToUser(store *store.Store, r *http.Request) (*models.User, error) {
 
 	cookies := r.Cookies()
