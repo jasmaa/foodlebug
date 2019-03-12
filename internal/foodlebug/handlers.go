@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/jasmaa/foodlebug/internal/models"
+
 	"github.com/jasmaa/foodlebug/internal/auth"
 	"github.com/jasmaa/foodlebug/internal/store"
 )
@@ -14,15 +16,72 @@ import (
 func handleHome(store *store.Store) http.Handler {
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		user, err := auth.SessionToUser(store, r)
+
+		_, err := auth.SessionToUser(store, r)
+		posts := store.GetPosts()
 
 		// Redirect to unlogged in home
 		if err != nil {
-			displayPage(w, "assets/templates/home.html", false, "")
+			displayPage(w, "assets/templates/home.html", false, posts)
 			return
 		}
 
-		displayPage(w, "assets/templates/home.html", true, user)
+		displayPage(w, "assets/templates/home.html", true, posts)
+	})
+}
+
+func handlePostEntry(store *store.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		user, err := auth.SessionToUser(store, r)
+
+		if err != nil {
+			http.Redirect(w, r, "./login", http.StatusSeeOther)
+			return
+		}
+
+		messages := make([]string, 10)
+
+		switch r.Method {
+
+		case "GET":
+			displayPage(w, "assets/templates/post.html", true, messages)
+
+		case "POST":
+			entryTitle := r.FormValue("entry-title")
+			content := r.FormValue("entry-content")
+			entryPhoto := r.FormValue("entry-photo")
+
+			// Check if entries filled
+			if entryTitle == "" || content == "" || entryPhoto == "" {
+				messages := append(messages, "Could not submit post.")
+				displayPage(w, "assets/templates/post.html", false, messages)
+				return
+			}
+
+			// Insert post into db
+			post := &models.Post{
+				Id:          store.GenerateId("posts"),
+				PosterId:    user.Id,
+				Photo:       entryPhoto,
+				Title:       entryTitle,
+				Content:     content,
+				TimePosted:  time.Now(),
+				LocationLat: 0,
+				LocationLon: 0,
+				Visible:     true,
+			}
+
+			err := store.InsertPost(post)
+			if err != nil {
+				messages := append(messages, "Could not submit post.")
+				displayPage(w, "assets/templates/post.html", false, messages)
+				return
+			}
+
+			fmt.Fprintf(w, "%s", post.Title)
+		}
+
 	})
 }
 

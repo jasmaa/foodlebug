@@ -31,6 +31,8 @@ func (f *Foodlebug) Run() {
 	r.Handle("/login", handleLogin(f.store))
 	r.Handle("/logout", handleLogout(f.store))
 	r.Handle("/createAccount", handleCreateAccount(f.store))
+
+	r.Handle("/postEntry", handlePostEntry(f.store))
 	r.Handle("/profile", handleProfile(f.store))
 	r.Handle("/", handleHome(f.store))
 

@@ -2,6 +2,17 @@
     
     <div id="mapid" style="height:400px; margin: 5% 20% 5% 20%;"></div>
 
+    <hr>
+
+    {{ range $i, $val := . }}
+        {{ if $val}}
+            <div class="post-entry card">
+                {{ $val.Title }}
+                <img {{ ($val.Photo) }}>
+            </div>
+        {{ end }}
+    {{ end }}
+
     <script>
         var mymap = L.map('mapid').setView([38.98582939, -76.937329584], 15);
 

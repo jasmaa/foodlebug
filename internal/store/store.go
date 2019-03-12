@@ -35,8 +35,37 @@ func (store *Store) Connect(host string, port int, user string, password string,
 	}
 }
 
+// Find a free id
+func (store *Store) GenerateId(table string) int {
+
+	res := true
+	var id int32
+
+	// keep looking for id
+	for res {
+
+		id = rand.Int31()
+
+		rows, err := store.db.Query("SELECT exists (SELECT 1 FROM "+table+" WHERE id=$1 LIMIT 1)", id)
+		if err != nil {
+			panic(err)
+		}
+		defer rows.Close()
+
+		rows.Next()
+		err = rows.Scan(&res)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	return int(id)
+}
+
+// === USER ===
+
 // Insert user into db
-func (store *Store) AddUser(u *models.User) error {
+func (store *Store) InsertUser(u *models.User) error {
 
 	var err error
 	_, err = store.db.Query(
@@ -96,32 +125,7 @@ func (store *Store) GetUsers() []*models.User {
 	return users
 }
 
-// Find a free id
-func (store *Store) GenerateUserId() int {
-
-	res := true
-	var id int32
-
-	// keep looking for id
-	for res {
-
-		id = rand.Int31()
-
-		rows, err := store.db.Query("SELECT exists (SELECT 1 FROM users WHERE id=$1 LIMIT 1)", id)
-		if err != nil {
-			panic(err)
-		}
-		defer rows.Close()
-
-		rows.Next()
-		err = rows.Scan(&res)
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	return int(id)
-}
+// === SESSION ===
 
 // Insert session into db
 func (store *Store) InsertSession(s *models.Session) error {
@@ -190,4 +194,55 @@ func (store *Store) UpdateSessionExpire(userKey string, expires time.Time) error
 	defer rows.Close()
 
 	return nil
+}
+
+// === POST ===
+func (store *Store) InsertPost(p *models.Post) error {
+	var err error
+	_, err = store.db.Query(
+		"INSERT INTO posts (id, posterId, photo, title, content, timePosted, locationLat, locationLon, visible) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)",
+		p.Id, p.PosterId, p.Photo, p.Title, p.Content, p.TimePosted, p.LocationLat, p.LocationLon, p.Visible)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Retrieves all posts in reverse chronological order
+func (store *Store) GetPosts() []*models.Post {
+
+	// Retrieve user
+	rows, err := store.db.Query("SELECT id, posterId, photo, title, content, timePosted, locationLat, locationLon, visible FROM posts ORDER BY timePosted DESC")
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+
+	posts := []*models.Post{}
+
+	// Iterate thru users
+	for rows.Next() {
+		post := &models.Post{}
+		err = rows.Scan(
+			&post.Id,
+			&post.PosterId,
+			&post.Photo,
+			&post.Title,
+			&post.Content,
+			&post.TimePosted,
+			&post.LocationLat,
+			&post.LocationLon,
+			&post.Visible,
+		)
+		if err != nil {
+			panic(err)
+		}
+
+		if post.Visible {
+			posts = append(posts, post)
+		}
+	}
+
+	return posts
 }

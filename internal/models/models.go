@@ -15,9 +15,10 @@ type User struct {
 type Post struct {
 	Id          int
 	PosterId    int
-	Photo       []byte
+	Photo       string
+	Title       string
 	Content     string
-	TimePosted  time.Duration
+	TimePosted  time.Time
 	LocationLat float64
 	LocationLon float64
 	Comments    []Comment

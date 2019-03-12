@@ -145,8 +145,8 @@ func CreateNewUser(store *store.Store, username string, password string) error {
 	}
 
 	// add user to db
-	err = store.AddUser(&models.User{
-		Id:       store.GenerateUserId(),
+	err = store.InsertUser(&models.User{
+		Id:       store.GenerateId("users"),
 		Username: username,
 		Password: hash,
 		Rating:   0,

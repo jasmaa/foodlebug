@@ -8,12 +8,13 @@ CREATE TABLE users (
 CREATE TABLE posts (
     id int NOT NULL UNIQUE,
     posterId int NOT NULL,
-    photo bytea NOT NULL,
+    photo varchar NOT NULL,
+    title varchar(255),
     content varchar(255),
     timePosted timestamp with time zone,
     locationLat real,
     locationLon real,
-    /*commentIds integer[]*/
+    commentIds integer[],
     visible boolean
 );
 

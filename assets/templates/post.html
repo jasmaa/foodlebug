@@ -1,0 +1,54 @@
+{{ define "content" }}
+
+    <div class="jumbotron middle-panel">
+
+        <h2>Post Entry</h2>
+
+        {{ range $i, $val := . }}
+            {{ if $val}}
+                <div class="alert alert-danger" role="alert">
+                    {{ $val }}
+                </div>
+            {{ end }}
+        {{ end }}
+
+        <form method="POST">
+            <div class="form-group">
+                
+                <input class="form-control" name="entry-title" type="text" value="" placeholder="Title"><br>
+
+                <label class="btn btn-secondary">
+                    Upload Photo <i class="fas fa-upload"></i>
+                    <input id="inp" type="file" accept="image/*" hidden>
+                </label><br>
+                <img id="img" class="center-img" height="150">
+                <input id="b64" name="entry-photo" hidden>
+                <br>
+
+                <textarea class="form-control" name="entry-content" rows="3" placeholder="Description"></textarea><br>
+
+                <input class="btn btn-primary" type="submit" value="Post">
+
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function readFile() {
+            if (this.files && this.files[0]) {
+
+                var FR = new FileReader();
+                
+                FR.addEventListener("load", function(e) {
+                   document.getElementById("img").src = e.target.result;
+                   document.getElementById("b64").value = e.target.result;
+                }); 
+                
+                FR.readAsDataURL( this.files[0] );
+            }    
+        }
+
+        document.getElementById("inp").addEventListener("change", readFile);
+    </script>
+
+{{ end }}
