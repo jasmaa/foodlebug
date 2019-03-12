@@ -68,6 +68,7 @@ func ExpireSession(store *store.Store, userKey string) error {
 	return nil
 }
 
+// Gets user from session cookie
 func SessionToUser(store *store.Store, r *http.Request) (*models.User, error) {
 
 	cookies := r.Cookies()
@@ -134,7 +135,7 @@ func VerifyPassword(hash, plain string) bool {
 	return true
 }
 
-// Create new user
+// Create new user account
 func CreateNewUser(store *store.Store, username string, password string) error {
 
 	// hash password

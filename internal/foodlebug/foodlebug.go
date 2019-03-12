@@ -32,6 +32,8 @@ func (f *Foodlebug) Run() {
 	r.Handle("/logout", handleLogout(f.store))
 	r.Handle("/createAccount", handleCreateAccount(f.store))
 	r.Handle("/profile", handleProfile(f.store))
+	r.Handle("/", handleHome(f.store))
+
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets/static"))))
 	http.Handle("/", r)
 

@@ -10,6 +10,22 @@ import (
 	"github.com/jasmaa/foodlebug/internal/store"
 )
 
+// Handle home page
+func handleHome(store *store.Store) http.Handler {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		user, err := auth.SessionToUser(store, r)
+
+		// Redirect to unlogged in home
+		if err != nil {
+			displayPage(w, "assets/templates/home.html", false, "")
+			return
+		}
+
+		displayPage(w, "assets/templates/home.html", true, user)
+	})
+}
+
 // Handles user profile
 func handleProfile(store *store.Store) http.Handler {
 
@@ -23,14 +39,7 @@ func handleProfile(store *store.Store) http.Handler {
 			return
 		}
 
-		w.WriteHeader(http.StatusOK)
-		var t *template.Template
-		t, _ = template.ParseFiles(
-			"assets/templates/main.html",
-			"assets/templates/profile.html",
-			"assets/templates/includes.html",
-		)
-		t.ExecuteTemplate(w, "main", user)
+		displayPage(w, "assets/templates/profile.html", true, user)
 	})
 }
 
@@ -43,7 +52,7 @@ func handleCreateAccount(store *store.Store) http.Handler {
 
 		switch r.Method {
 		case "GET":
-			displayCreateAccount(w, messages)
+			displayPage(w, "assets/templates/createAccount.html", false, messages)
 
 		case "POST":
 			username := r.FormValue("username")
@@ -52,11 +61,11 @@ func handleCreateAccount(store *store.Store) http.Handler {
 
 			if username == "" || password == "" {
 				messages := append(messages, "Fields cannot be empty.")
-				displayCreateAccount(w, messages)
+				displayPage(w, "assets/templates/createAccount.html", false, messages)
 				return
 			} else if password != confirm {
 				messages := append(messages, "Passwords do not match.")
-				displayCreateAccount(w, messages)
+				displayPage(w, "assets/templates/createAccount.html", false, messages)
 				return
 			}
 
@@ -64,12 +73,12 @@ func handleCreateAccount(store *store.Store) http.Handler {
 
 			if err != nil {
 				messages := append(messages, "Account could not be created.")
-				displayCreateAccount(w, messages)
+				displayPage(w, "assets/templates/createAccount.html", false, messages)
 				return
 			}
 
 			// go to success page
-			displayCreateAccountSuccess(w)
+			displayPage(w, "assets/templates/createAccountSuccess.html", false, "")
 		}
 	})
 }
@@ -83,7 +92,7 @@ func handleLogin(store *store.Store) http.Handler {
 
 		switch r.Method {
 		case "GET":
-			displayLogin(w, messages)
+			displayPage(w, "assets/templates/login.html", false, messages)
 
 		case "POST":
 			username := r.FormValue("username")
@@ -92,13 +101,13 @@ func handleLogin(store *store.Store) http.Handler {
 			user, err := store.GetUser("username", username)
 			if err != nil {
 				messages := append(messages, "User does not exist.")
-				displayLogin(w, messages)
+				displayPage(w, "assets/templates/login.html", false, messages)
 				return
 			}
 
 			if !auth.VerifyPassword(user.Password, password) {
 				messages := append(messages, "Incorrect password.")
-				displayLogin(w, messages)
+				displayPage(w, "assets/templates/login.html", false, messages)
 				return
 			}
 
@@ -106,7 +115,7 @@ func handleLogin(store *store.Store) http.Handler {
 			s, err := auth.NewSession(store, user, time.Time{}, "ip address", "user agent")
 			if err != nil {
 				messages := append(messages, "Could not login.")
-				displayLogin(w, messages)
+				displayPage(w, "assets/templates/login.html", false, messages)
 				return
 			}
 
@@ -144,60 +153,26 @@ func handleLogout(store *store.Store) http.Handler {
 			return
 		}
 
-		displayLogoutSuccess(w)
+		displayPage(w, "assets/templates/logoutSuccess.html", false, "")
 	})
 }
 
-// == Static display ==
+// Display page
+func displayPage(w http.ResponseWriter, contentPath string, loggedIn bool, data interface{}) {
 
-// Display create account screen get
-func displayCreateAccount(w http.ResponseWriter, messages []string) {
-
-	w.WriteHeader(http.StatusOK)
-	var t *template.Template
-	t, _ = template.ParseFiles(
-		"assets/templates/main.html",
-		"assets/templates/includes.html",
-		"assets/templates/createAccount.html",
-	)
-	t.ExecuteTemplate(w, "main", messages)
-}
-
-// Display login screen get
-func displayLogin(w http.ResponseWriter, messages []string) {
+	// Select proper navbar
+	navbarPath := "assets/templates/includes/navbarLoggedOut.html"
+	if loggedIn {
+		navbarPath = "assets/templates/includes/navbarLoggedIn.html"
+	}
 
 	w.WriteHeader(http.StatusOK)
 	var t *template.Template
 	t, _ = template.ParseFiles(
 		"assets/templates/main.html",
-		"assets/templates/includes.html",
-		"assets/templates/login.html",
+		"assets/templates/includes/footer.html",
+		contentPath,
+		navbarPath,
 	)
-	t.ExecuteTemplate(w, "main", messages)
-}
-
-// Account creation success
-func displayCreateAccountSuccess(w http.ResponseWriter) {
-
-	w.WriteHeader(http.StatusOK)
-	var t *template.Template
-	t, _ = template.ParseFiles(
-		"assets/templates/main.html",
-		"assets/templates/includes.html",
-		"assets/templates/createAccountSuccess.html",
-	)
-	t.ExecuteTemplate(w, "main", "")
-}
-
-// Logout success
-func displayLogoutSuccess(w http.ResponseWriter) {
-
-	w.WriteHeader(http.StatusOK)
-	var t *template.Template
-	t, _ = template.ParseFiles(
-		"assets/templates/main.html",
-		"assets/templates/includes.html",
-		"assets/templates/logoutSuccess.html",
-	)
-	t.ExecuteTemplate(w, "main", "")
+	t.ExecuteTemplate(w, "main", data)
 }
