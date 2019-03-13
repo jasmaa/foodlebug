@@ -1,14 +1,31 @@
 {{ define "content" }}
     
-    <div id="mapid" style="height:400px; margin: 5% 20% 5% 20%;"></div>
+    <div id="mapid"></div>
 
     <hr>
 
     {{ range $i, $val := . }}
         {{ if $val}}
             <div class="post-entry card">
-                {{ $val.Title }}
-                <img {{ ($val.Photo) }}>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <h3 class="card-title">{{$val.Title}}</h3>
+                        </div>
+                        <div class="col-4">
+                            <h5>{{$val.TimePosted.Format "Mon Jan 2 15:04:05 MST 2006"}}</h5>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col">
+                            <img width=200 src="data:image/jpg;base64,{{ ($val.Photo) }}">
+                        </div>
+                        <div class="col-8">
+                            <p>{{$val.Content}}</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         {{ end }}
     {{ end }}
@@ -24,4 +41,4 @@
         }).addTo(mymap);
     </script>
 
-{{ end }}
+{{ end }}f  

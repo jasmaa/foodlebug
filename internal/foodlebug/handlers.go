@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/jasmaa/foodlebug/internal/models"
@@ -59,11 +60,26 @@ func handlePostEntry(store *store.Store) http.Handler {
 				return
 			}
 
+			// Get b64 data
+			data := strings.Split(entryPhoto, ",")
+			if len(data) != 2 {
+				messages := append(messages, "Could not submit post.")
+				displayPage(w, "assets/templates/post.html", false, messages)
+				return
+			}
+
+			// Limit size
+			if float64(len(data[1]))/1.37 > 500000 {
+				messages := append(messages, "Image exceeded 50KB.")
+				displayPage(w, "assets/templates/post.html", false, messages)
+				return
+			}
+
 			// Insert post into db
 			post := &models.Post{
 				Id:          store.GenerateId("posts"),
 				PosterId:    user.Id,
-				Photo:       entryPhoto,
+				Photo:       data[1],
 				Title:       entryTitle,
 				Content:     content,
 				TimePosted:  time.Now(),
