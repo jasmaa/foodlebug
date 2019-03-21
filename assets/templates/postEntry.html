@@ -23,6 +23,8 @@
                 </label><br>
                 <img id="img" class="center-img" height="150">
                 <input id="b64" name="entry-photo" hidden>
+                <input id="lat" name="lat" value="-1" hidden>
+                <input id="lon" name="lon" value="-1" hidden>
                 <br>
 
                 <textarea class="form-control" name="entry-content" rows="3" placeholder="Description"></textarea><br>
@@ -34,6 +36,7 @@
     </div>
 
     <script>
+        // Image file reading
         function readFile() {
             if (this.files && this.files[0]) {
 
@@ -47,8 +50,17 @@
                 FR.readAsDataURL( this.files[0] );
             }    
         }
-
         document.getElementById("inp").addEventListener("change", readFile);
+
+        // Get geo coords
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function success(position) {
+                    document.getElementById("lat").value = position.coords.latitude;
+                    document.getElementById("lon").value = position.coords.longitude;
+                }
+            );
+        }
     </script>
 
 {{ end }}

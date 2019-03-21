@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -71,17 +72,31 @@ func handlePostEntry(store *store.Store) http.Handler {
 		switch r.Method {
 
 		case "GET":
-			displayPage(w, "assets/templates/post.html", true, messages)
+			displayPage(w, "assets/templates/postEntry.html", true, messages)
 
 		case "POST":
 			entryTitle := r.FormValue("entry-title")
 			content := r.FormValue("entry-content")
 			entryPhoto := r.FormValue("entry-photo")
 
+			lat, err := strconv.ParseFloat(r.FormValue("lat"), 64)
+			if err != nil {
+				messages := append(messages, "Could not submit post.")
+				displayPage(w, "assets/templates/postEntry.html", false, messages)
+				return
+			}
+
+			lon, err := strconv.ParseFloat(r.FormValue("lon"), 64)
+			if err != nil {
+				messages := append(messages, "Could not submit post.")
+				displayPage(w, "assets/templates/postEntry.html", false, messages)
+				return
+			}
+
 			// Check if entries filled
 			if entryTitle == "" || content == "" || entryPhoto == "" {
 				messages := append(messages, "Could not submit post.")
-				displayPage(w, "assets/templates/post.html", false, messages)
+				displayPage(w, "assets/templates/postEntry.html", false, messages)
 				return
 			}
 
@@ -89,14 +104,14 @@ func handlePostEntry(store *store.Store) http.Handler {
 			data := strings.Split(entryPhoto, ",")
 			if len(data) != 2 {
 				messages := append(messages, "Could not submit post.")
-				displayPage(w, "assets/templates/post.html", false, messages)
+				displayPage(w, "assets/templates/postEntry.html", false, messages)
 				return
 			}
 
 			// Limit size
 			if float64(len(data[1]))/1.37 > 5000000 {
 				messages := append(messages, "Image exceeded 500KB.")
-				displayPage(w, "assets/templates/post.html", false, messages)
+				displayPage(w, "assets/templates/postEntry.html", false, messages)
 				return
 			}
 
@@ -108,15 +123,15 @@ func handlePostEntry(store *store.Store) http.Handler {
 				Title:       entryTitle,
 				Content:     content,
 				TimePosted:  time.Now(),
-				LocationLat: 0,
-				LocationLon: 0,
+				LocationLat: lat,
+				LocationLon: lon,
 				Visible:     true,
 			}
 
-			err := store.InsertPost(post)
+			err = store.InsertPost(post)
 			if err != nil {
 				messages := append(messages, "Could not submit post.")
-				displayPage(w, "assets/templates/post.html", false, messages)
+				displayPage(w, "assets/templates/postEntry.html", false, messages)
 				return
 			}
 
