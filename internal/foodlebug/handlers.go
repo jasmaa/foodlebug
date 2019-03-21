@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/gorilla/mux"
 	"github.com/jasmaa/foodlebug/internal/models"
 
 	"github.com/jasmaa/foodlebug/internal/auth"
@@ -19,7 +20,7 @@ func handleHome(store *store.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		_, err := auth.SessionToUser(store, r)
-		posts := store.GetPosts()
+		posts, _ := store.GetPosts()
 
 		// Redirect to unlogged in home
 		if err != nil {
@@ -31,13 +32,37 @@ func handleHome(store *store.Store) http.Handler {
 	})
 }
 
+// Handle post page
+func handlePage(store *store.Store) http.Handler {
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+
+		post, err := store.GetPost("id", vars["postId"])
+		if err != nil || post == nil {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+
+		// check if logged in
+		_, err = auth.SessionToUser(store, r)
+		if err != nil {
+			displayPage(w, "assets/templates/postPage.html", false, post)
+			return
+		}
+
+		displayPage(w, "assets/templates/postPage.html", true, post)
+	})
+}
+
+// Post entry page handler
 func handlePostEntry(store *store.Store) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		user, err := auth.SessionToUser(store, r)
 
 		if err != nil {
-			http.Redirect(w, r, "./login", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
@@ -69,8 +94,8 @@ func handlePostEntry(store *store.Store) http.Handler {
 			}
 
 			// Limit size
-			if float64(len(data[1]))/1.37 > 500000 {
-				messages := append(messages, "Image exceeded 50KB.")
+			if float64(len(data[1]))/1.37 > 5000000 {
+				messages := append(messages, "Image exceeded 500KB.")
 				displayPage(w, "assets/templates/post.html", false, messages)
 				return
 			}
@@ -95,7 +120,8 @@ func handlePostEntry(store *store.Store) http.Handler {
 				return
 			}
 
-			fmt.Fprintf(w, "%s", post.Title)
+			// Redirect to home
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 		}
 
 	})
@@ -110,7 +136,7 @@ func handleProfile(store *store.Store) http.Handler {
 
 		// Redirect to login on session failure
 		if err != nil {
-			http.Redirect(w, r, "./login", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
@@ -166,6 +192,7 @@ func handleLogin(store *store.Store) http.Handler {
 		messages := make([]string, 10)
 
 		switch r.Method {
+
 		case "GET":
 			displayPage(w, "assets/templates/login.html", false, messages)
 
@@ -203,7 +230,7 @@ func handleLogin(store *store.Store) http.Handler {
 			}
 
 			http.SetCookie(w, cookie)
-			http.Redirect(w, r, "./profile", http.StatusSeeOther)
+			http.Redirect(w, r, "/profile", http.StatusSeeOther)
 		}
 	})
 }
@@ -216,7 +243,7 @@ func handleLogout(store *store.Store) http.Handler {
 
 		// Redirect to login on session failure
 		if err != nil {
-			http.Redirect(w, r, "./login", http.StatusSeeOther)
+			http.Redirect(w, r, "/login", http.StatusSeeOther)
 			return
 		}
 
@@ -224,7 +251,7 @@ func handleLogout(store *store.Store) http.Handler {
 
 		// Redirect to profile on error
 		if err != nil {
-			http.Redirect(w, r, "./profile", http.StatusSeeOther)
+			http.Redirect(w, r, "/profile", http.StatusSeeOther)
 			return
 		}
 

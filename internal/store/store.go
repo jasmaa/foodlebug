@@ -91,7 +91,7 @@ func (store *Store) GetUser(field string, val string) (*models.User, error) {
 		user := &models.User{}
 		err = rows.Scan(&user.Id, &user.Username, &user.Password, &user.Rating)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 		return user, nil
 	}
@@ -100,12 +100,12 @@ func (store *Store) GetUser(field string, val string) (*models.User, error) {
 }
 
 // Retrieves all users
-func (store *Store) GetUsers() []*models.User {
+func (store *Store) GetUsers() ([]*models.User, error) {
 
 	// Retrieve user
 	rows, err := store.db.Query("SELECT id, username, password, rating FROM users")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -116,13 +116,13 @@ func (store *Store) GetUsers() []*models.User {
 		user := &models.User{}
 		err = rows.Scan(&user.Id, &user.Username, &user.Password, &user.Rating)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		users = append(users, user)
 	}
 
-	return users
+	return users, nil
 }
 
 // === SESSION ===
@@ -145,7 +145,7 @@ func (store *Store) InsertSession(s *models.Session) error {
 func (store *Store) DeleteSessions(userKey string) error {
 	_, err := store.db.Query(fmt.Sprintf("DELETE FROM sessions WHERE userKey='%s'", userKey))
 	if err != nil {
-		return errors.New("Could not query db")
+		return err
 	}
 	return nil
 }
@@ -155,7 +155,7 @@ func (store *Store) GetSession(userKey string) (*models.Session, error) {
 
 	rows, err := store.db.Query(fmt.Sprintf("SELECT sessionId, CSRFToken, expires, created, ipAddress, userAgent FROM sessions WHERE userKey='%s'", userKey))
 	if err != nil {
-		return nil, errors.New("Could not query db")
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -173,7 +173,7 @@ func (store *Store) GetSession(userKey string) (*models.Session, error) {
 			&s.UserAgent,
 		)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		s.Expires, _ = time.Parse(time.RFC3339, expireRaw)
@@ -182,14 +182,14 @@ func (store *Store) GetSession(userKey string) (*models.Session, error) {
 		return s, nil
 	}
 
-	return nil, errors.New("Could not get session")
+	return nil, err
 }
 
 // Update session
 func (store *Store) UpdateSessionExpire(userKey string, expires time.Time) error {
 	rows, err := store.db.Query("UPDATE sessions SET expires=$1 WHERE userKey=$2", expires, userKey)
 	if err != nil {
-		return errors.New("Could not query db")
+		return err
 	}
 	defer rows.Close()
 
@@ -197,6 +197,8 @@ func (store *Store) UpdateSessionExpire(userKey string, expires time.Time) error
 }
 
 // === POST ===
+
+// Insert post
 func (store *Store) InsertPost(p *models.Post) error {
 	var err error
 	_, err = store.db.Query(
@@ -210,12 +212,12 @@ func (store *Store) InsertPost(p *models.Post) error {
 }
 
 // Retrieves all posts in reverse chronological order
-func (store *Store) GetPosts() []*models.Post {
+func (store *Store) GetPosts() ([]*models.Post, error) {
 
 	// Retrieve user
 	rows, err := store.db.Query("SELECT id, posterId, photo, title, content, timePosted, locationLat, locationLon, visible FROM posts ORDER BY timePosted DESC")
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -236,7 +238,7 @@ func (store *Store) GetPosts() []*models.Post {
 			&post.Visible,
 		)
 		if err != nil {
-			panic(err)
+			return nil, err
 		}
 
 		if post.Visible {
@@ -244,5 +246,36 @@ func (store *Store) GetPosts() []*models.Post {
 		}
 	}
 
-	return posts
+	return posts, nil
+}
+
+// Get post by field
+func (store *Store) GetPost(field string, val string) (*models.Post, error) {
+
+	rows, err := store.db.Query(fmt.Sprintf("SELECT id, posterId, photo, title, content, timePosted, locationLat, locationLon, visible FROM posts WHERE %s='%s'", field, val))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		post := &models.Post{}
+		err = rows.Scan(
+			&post.Id,
+			&post.PosterId,
+			&post.Photo,
+			&post.Title,
+			&post.Content,
+			&post.TimePosted,
+			&post.LocationLat,
+			&post.LocationLon,
+			&post.Visible,
+		)
+		if err != nil {
+			return nil, err
+		}
+		return post, nil
+	}
+
+	return nil, err
 }

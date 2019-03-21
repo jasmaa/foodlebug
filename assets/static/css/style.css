@@ -1,11 +1,14 @@
+.border-6 {
+  border-width:6px !important;
+}
+
+
 .middle-panel {
   margin: 5% 30% 5% 30%;
 }
-
 .profile-panel {
   margin: 5% 20% 5% 20%;
 }
-
 .profile-info-panel {
   margin: 0% 10% 0% 10%;
   padding: 1% 1% 1% 1%;
@@ -21,7 +24,6 @@
 
   border: 10px solid white;
 }
-
 .center-img {
   display: block;
   margin-left: auto;
@@ -34,13 +36,25 @@
 
 .post-entry{
   padding: 1% 1% 1% 1%;
-  margin: 1% 20% 1% 20%;
+  margin: 3% 20% 1% 20%;
+}
+.post-img{
+  width: 70%;
+}
+
+.page-img{
+  width: 80%;
+}
+.page-content{
+  padding: 5% 5% 5% 5%;
 }
 
 #mapid {
   height:400px;
   margin: 5% 20% 5% 20%;
 }
+
+
 
 @media (max-width : 800px) {
   .middle-panel {
@@ -57,7 +71,7 @@
 
   .post-entry{
     padding: 1% 1% 1% 1%;
-    margin: 1% 1% 1% 1%;
+    margin: 10% 1% 1% 1%;
   }
 
   #mapid {

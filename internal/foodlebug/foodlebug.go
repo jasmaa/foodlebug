@@ -18,8 +18,9 @@ type Foodlebug struct {
 	store *store.Store
 }
 
+// Runs site
 func (f *Foodlebug) Run() {
-	// Runs site
+
 	fmt.Println("Start...")
 
 	// connect to db
@@ -34,6 +35,7 @@ func (f *Foodlebug) Run() {
 
 	r.Handle("/postEntry", handlePostEntry(f.store))
 	r.Handle("/profile", handleProfile(f.store))
+	r.Handle("/page/{postId}", handlePage(f.store))
 	r.Handle("/", handleHome(f.store))
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("assets/static"))))
