@@ -35,6 +35,7 @@ func (f *Foodlebug) Run() {
 
 	r.Handle("/postEntry", handlePostEntry(f.store))
 	r.Handle("/profile", handleProfile(f.store))
+	r.Handle("/about", handleAbout(f.store))
 	r.Handle("/page/{postId}", handlePage(f.store))
 	r.Handle("/", handleHome(f.store))
 

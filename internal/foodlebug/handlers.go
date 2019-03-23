@@ -23,13 +23,26 @@ func handleHome(store *store.Store) http.Handler {
 		_, err := auth.SessionToUser(store, r)
 		posts, _ := store.GetPosts()
 
-		// Redirect to unlogged in home
 		if err != nil {
 			displayPage(w, "assets/templates/home.html", false, posts)
 			return
 		}
 
 		displayPage(w, "assets/templates/home.html", true, posts)
+	})
+}
+
+// Handle about page
+func handleAbout(store *store.Store) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, err := auth.SessionToUser(store, r)
+
+		if err != nil {
+			displayPage(w, "assets/templates/about.html", false, "")
+			return
+		}
+
+		displayPage(w, "assets/templates/about.html", true, "")
 	})
 }
 

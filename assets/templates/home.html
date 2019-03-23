@@ -1,12 +1,14 @@
 {{ define "content" }}
     
-    <div id="mapid"></div>
-
-    <hr>
+    <div style="background-color: coral; padding: 1% 1% 1% 1%;">
+        <br>
+        <h1 align="center">Foodlebug</h1>
+        <div id="mapid"></div>
+    </div>
 
     {{ range $i, $val := . }}
         {{ if and ($val) (lt $i 5) }}
-            <div class="post-entry card border-6">
+            <div class="post-entry card">
                 <div class="container">
                     <div class="row">
                         <div class="col">

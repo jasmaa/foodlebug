@@ -1,7 +1,12 @@
+body {
+  background-image: url("/static/images/bg.jpg");
+  background-color: #dddddd;
+ }
+
+
 .border-6 {
   border-width:6px !important;
 }
-
 
 .middle-panel {
   margin: 5% 30% 5% 30%;
@@ -36,7 +41,7 @@
 
 .post-entry{
   padding: 1% 1% 1% 1%;
-  margin: 3% 20% 1% 20%;
+  margin: 3% 20% 3% 20%;
 }
 .post-img{
   width: 70%;
@@ -48,9 +53,21 @@
 .page-content{
   padding: 5% 5% 5% 5%;
 }
+.page-panel{
+  margin: 5% 10% 5% 10%;
+  padding: 1% 1% 1% 1%;
+}
+.page-footer{
+  padding: 1% 1% 1% 1%;
+  background-color: white;
+}
+.page-heading{
+  padding: 5% 5% 5% 5%;
+  background-color: white;
+}
 
 #mapid {
-  height:400px;
+  height: 400px;
   margin: 5% 20% 5% 20%;
 }
 
@@ -58,11 +75,11 @@
 
 @media (max-width : 800px) {
   .middle-panel {
-    margin: 5% 1% 5% 1%;
+    margin: 5% 5% 5% 5%;
   }
 
   .profile-panel {
-    margin: 5% 1% 5% 1%;
+    margin: 5% 5% 5% 5%;
   }
 
   .profile-info-panel {
@@ -71,11 +88,11 @@
 
   .post-entry{
     padding: 1% 1% 1% 1%;
-    margin: 10% 1% 1% 1%;
+    margin: 10% 5% 1% 5%;
   }
 
   #mapid {
     height:400px;
-    margin: 5% 1% 5% 1%;
+    margin: 5% 5% 5% 5%;
   }
 }
