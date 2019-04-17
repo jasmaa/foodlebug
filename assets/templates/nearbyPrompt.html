@@ -1,0 +1,32 @@
+{{ define "content" }}
+
+    {{ range $i, $val := . }}
+        {{ if $val}}
+            <div class="alert alert-danger" role="alert">
+                {{ $val }}
+            </div>
+        {{ end }}
+    {{ end }}
+
+    <form method="POST">
+        <div class="form-group">
+            <input id="lat" name="lat" value="-1" hidden>
+            <input id="lon" name="lon" value="-1" hidden>
+
+            <input class="btn btn-primary" type="submit" value="Search">
+        </div>
+    </form>
+
+    <script>
+        // Get geo coords
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition(
+                function success(position) {
+                    document.getElementById("lat").value = position.coords.latitude;
+                    document.getElementById("lon").value = position.coords.longitude;
+                }
+            );
+        }
+    </script>
+
+{{ end }}

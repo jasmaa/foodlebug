@@ -1,5 +1,5 @@
 body {
-  background-image: url("/static/images/bg.jpg");
+  // background-image: url("/static/images/bg.jpg");
   background-color: #dddddd;
  }
 
@@ -16,7 +16,7 @@ body {
 }
 .profile-info-panel {
   margin: 0% 10% 0% 10%;
-  padding: 1% 1% 1% 1%;
+  padding: 5% 5% 5% 5%;
 }
 
 .circle-cropper {
@@ -48,7 +48,7 @@ body {
 }
 
 .page-img{
-  width: 80%;
+  width: 50%;
 }
 .page-content{
   padding: 5% 5% 5% 5%;
@@ -84,11 +84,16 @@ body {
 
   .profile-info-panel {
     margin: 0% 1% 0% 1%;
+    padding: 5% 5% 5% 5%;
   }
 
   .post-entry{
     padding: 1% 1% 1% 1%;
     margin: 10% 5% 1% 5%;
+  }
+
+  .page-img{
+    width: 80%;
   }
 
   #mapid {

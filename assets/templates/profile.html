@@ -4,18 +4,31 @@
     <img class="circle-cropper center-img" src="static/images/cat.jpg">
     <br>
     <div class="card profile-info-panel">
-        <h1 align="center">{{ .Username }}</h1>
+        <h1 align="center">{{ .User.Username }}</h1>
         <p id="rating" align ="center"></p>
 
         <hr>
 
         <h2>Recent Postings:</h2>
+        <ul class="list-group">
+        {{ range $i, $val := .UserPosts }}
+            {{ if $val}}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{$val.Title}}
+                    <span>
+                        <a class="badge badge-success badge-pill" href="/page/{{ $val.Id }}">Go</a>
+                    </span>
+                </li>
+                
+            {{ end }}
+        {{ end }}
+        </ul>
 
     </div>
 </div>
 
 <script>
-    numToStars({{.Rating}}, "rating")
+    numToStars({{.User.Rating}}, "rating")
 </script>
 
 {{ end }}
