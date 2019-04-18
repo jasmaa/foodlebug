@@ -134,10 +134,14 @@ func handleProfile(store *store.Store) http.Handler {
 			}
 		}
 
+		// md5 email
+		profileHash := auth.GetMD5Hash(user.Email)
+
 		type Data struct {
-			User      *models.User
-			UserPosts []*models.Post
+			User        *models.User
+			UserPosts   []*models.Post
+			ProfileHash string
 		}
-		displayPage(w, "assets/templates/profile.html", true, Data{user, userPosts})
+		displayPage(w, "assets/templates/profile.html", true, Data{user, userPosts, profileHash})
 	})
 }

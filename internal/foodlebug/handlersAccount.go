@@ -23,10 +23,11 @@ func handleCreateAccount(store *store.Store) http.Handler {
 
 		case "POST":
 			username := r.FormValue("username")
+			email := r.FormValue("email")
 			password := r.FormValue("password")
 			confirm := r.FormValue("confirm-password")
 
-			if username == "" || password == "" {
+			if username == "" || password == "" || email == "" {
 				messages := append(messages, "Fields cannot be empty.")
 				displayPage(w, "assets/templates/createAccount.html", false, messages)
 				return
@@ -36,7 +37,7 @@ func handleCreateAccount(store *store.Store) http.Handler {
 				return
 			}
 
-			err := auth.CreateNewUser(store, username, password)
+			err := auth.CreateNewUser(store, username, email, password)
 
 			if err != nil {
 				messages := append(messages, "Account could not be created.")

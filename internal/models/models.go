@@ -9,6 +9,7 @@ type User struct {
 	Id       int
 	Username string
 	Password string
+	Email    string
 	Rating   float64
 }
 

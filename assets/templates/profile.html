@@ -1,7 +1,7 @@
 {{ define "content" }}
 
 <div class="jumbotron profile-panel">
-    <img class="circle-cropper center-img" src="static/images/cat.jpg">
+    <img class="circle-cropper center-img" src="https://www.gravatar.com/avatar/{{ .ProfileHash }}?s=200">
     <br>
     <div class="card profile-info-panel">
         <h1 align="center">{{ .User.Username }}</h1>

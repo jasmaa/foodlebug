@@ -69,8 +69,8 @@ func (store *Store) InsertUser(u *models.User) error {
 
 	var err error
 	_, err = store.db.Query(
-		"INSERT INTO users (id, username, password, rating) VALUES ($1, $2, $3, $4)",
-		u.Id, u.Username, u.Password, u.Rating)
+		"INSERT INTO users (id, username, password, email, rating) VALUES ($1, $2, $3, $4, $5)",
+		u.Id, u.Username, u.Password, u.Email, u.Rating)
 	if err != nil {
 		return err
 	}
@@ -81,7 +81,7 @@ func (store *Store) InsertUser(u *models.User) error {
 // Retrieve user by field
 func (store *Store) GetUser(field string, val string) (*models.User, error) {
 
-	rows, err := store.db.Query(fmt.Sprintf("SELECT id, username, password, rating FROM users WHERE %s='%s'", field, val))
+	rows, err := store.db.Query(fmt.Sprintf("SELECT id, username, password, email, rating FROM users WHERE %s='%s'", field, val))
 	if err != nil {
 		return nil, errors.New("Could not query db")
 	}
@@ -89,7 +89,7 @@ func (store *Store) GetUser(field string, val string) (*models.User, error) {
 
 	if rows.Next() {
 		user := &models.User{}
-		err = rows.Scan(&user.Id, &user.Username, &user.Password, &user.Rating)
+		err = rows.Scan(&user.Id, &user.Username, &user.Password, &user.Email, &user.Rating)
 		if err != nil {
 			return nil, err
 		}
@@ -103,7 +103,7 @@ func (store *Store) GetUser(field string, val string) (*models.User, error) {
 func (store *Store) GetUsers() ([]*models.User, error) {
 
 	// Retrieve user
-	rows, err := store.db.Query("SELECT id, username, password, rating FROM users")
+	rows, err := store.db.Query("SELECT id, username, password, email, rating FROM users")
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func (store *Store) GetUsers() ([]*models.User, error) {
 	// Iterate thru users
 	for rows.Next() {
 		user := &models.User{}
-		err = rows.Scan(&user.Id, &user.Username, &user.Password, &user.Rating)
+		err = rows.Scan(&user.Id, &user.Username, &user.Password, &user.Email, &user.Rating)
 		if err != nil {
 			return nil, err
 		}

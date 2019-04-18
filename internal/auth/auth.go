@@ -2,8 +2,10 @@
 package auth
 
 import (
+	"crypto/md5"
 	"crypto/rand"
 	"encoding/base64"
+	"encoding/hex"
 	"errors"
 	"io"
 	"net/http"
@@ -136,7 +138,7 @@ func VerifyPassword(hash, plain string) bool {
 }
 
 // Create new user account
-func CreateNewUser(store *store.Store, username string, password string) error {
+func CreateNewUser(store *store.Store, username string, email string, password string) error {
 
 	// hash password
 	hash, err := HashPassword(password)
@@ -149,8 +151,16 @@ func CreateNewUser(store *store.Store, username string, password string) error {
 		Id:       store.GenerateId("users"),
 		Username: username,
 		Password: hash,
+		Email:    email,
 		Rating:   0,
 	})
 
 	return err
+}
+
+// Gets md5 hash
+func GetMD5Hash(text string) string {
+	hasher := md5.New()
+	hasher.Write([]byte(text))
+	return hex.EncodeToString(hasher.Sum(nil))
 }
