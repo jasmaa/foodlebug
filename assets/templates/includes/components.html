@@ -1,0 +1,96 @@
+{{ define "footer" }}
+  <<!-- Footer -->
+<footer class="page-footer font-small blue pt-4">
+
+        <!-- Footer Links -->
+        <div class="container-fluid text-center text-md-left">
+          <!-- Grid row -->
+          <div class="row">
+            <!-- Grid column -->
+            <div class="col-md-6 mt-md-0 mt-3">
+              <!-- Content -->
+              <h5 class="text-uppercase">Foodlebug</h5>
+              <hr>
+              <p>Share leftover food easily and without hassle.</p>
+            </div>
+
+            <div class="col-md-3 mb-md-0 mb-3">
+                <h5 class="text-uppercase">NAVIGATION</h5>
+                <hr>
+                <ul class="list-unstyled">
+                  <li><a href="/">Home</a></li>
+                  <li><a href="/about">About</a></li>
+                  <li><a href="/browse">Browse</a></li>
+                </ul>
+    
+              </div>
+
+              <div class="col-md-3 mb-md-0 mb-3">
+                <h5 class="text-uppercase">CONTACT</h5>
+                <hr>
+                <ul class="list-unstyled">
+                    <li><i class="fas fa-envelope"></i> example@mail.com</li>
+                    <li><i class="fas fa-phone"></i> 301-888-8888</li>
+                    <li><i class="fab fa-twitter"></i> @example_handle</li>
+                </ul>
+              </div>
+          </div>
+        </div>
+    
+        <!-- Copyright -->
+        <div class="footer-copyright text-center py-3">
+            Foodlebug | Made with <i class="fas fa-heart" style="color:red;"></i>
+        </div>
+      </footer>
+{{ end }}
+
+{{ define "postCard" }}
+    <div class="post-entry card">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <h2 class="card-title" style="vertical-align: middle;">{{.Title}}</h2>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <h5 style="vertical-align: middle;">{{.TimePosted.Format "Jan 2, 2006 15:04"}}</h5>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <div class="col">
+                    <img class="lazy post-img" data-src="data:image/jpg;base64,{{ (.Photo) }}">
+                </div>
+                <div class="col-8">
+                    <p style="font-size: 15pt;">{{.Content}}</p>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <a href="/page/{{.Id}}" class="btn btn-success btn-block">More Details</a>
+            </div>
+        </div>
+    </div>
+{{ end }}
+
+{{ define "navbar-base" }}
+    <a class="navbar-brand" href="/">Foodlebug</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+        <li class="nav-item">
+        <a class="nav-link" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="/about">About</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" href="/browse">Browse</a>
+        </li>
+    </ul>
+    </div>
+{{ end }}

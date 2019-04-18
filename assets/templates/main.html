@@ -22,6 +22,8 @@
       integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
       crossorigin=""></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@11.0.6/dist/lazyload.min.js"></script>
+
     <script src="/static/js/app.js"></script>
     <link rel="stylesheet" type="text/css" href="/static/css/style.css">
   </head>
@@ -34,5 +36,13 @@
     {{ template "footer" . }}
 
   </body>
+  <script>
+    // init lazy load
+    var lazyLoadInstance = new LazyLoad({
+        elements_selector: ".lazy"
+    });
+    
+  </script>
+
 </html>
 {{ end }}

@@ -1,0 +1,5 @@
+{{ define "content" }}
+    {{ range $i, $val := . }}
+        {{ template "postCard" $val }}
+    {{ end }}
+{{ end }}

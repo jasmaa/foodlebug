@@ -1,5 +1,4 @@
 
-
 // convert rating to stars
 function numToStars(n, target){
     n = parseInt(n);
